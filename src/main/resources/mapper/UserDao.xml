@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="example.dao.UserDao">
+    <select id="findUser"  resultType="User">
+      SELECT * FROM user
+    </select>
+
+    <!-- 获取用户list 这里的  #{start} 中 start 必须要与 @Param("start") 中的 start 名字一样 否则无法传入参数   #{count}同理-->
+    <select id="getlist" resultType="User">
+        select * from user order by id asc limit #{start},#{count}
+    </select>
+    <!-- 获取用户总数 -->
+    <select id="getTotal"  resultType="Integer">
+      SELECT count(*) FROM user
+    </select>
+</mapper>

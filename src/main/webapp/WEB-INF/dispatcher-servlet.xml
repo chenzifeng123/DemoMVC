@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+    <!--此文件负责整个mvc中的配置-->
+
+    <!--启用spring的一些annotation -->
+    <context:annotation-config/>
+
+    <!-- 配置注解驱动 可以将request参数与绑定到controller参数上 -->
+    <!-- <mvc:annotation-driven /> 会自动注册DefaultAnnotationHandlerMapping 映射器 与AnnotationMethodHandlerAdapter 适配器 两个bean,是spring MVC为@Controllers分发请求所必须的。
+    它提供了数据绑定支持，读取json的支持 -->
+    <mvc:annotation-driven/>
+
+    <!--静态资源映射-->
+    <!--本项目把静态资源放在了webapp的statics目录下，资源映射如下 在WEB-INF下的文件都是将webapp目录作为根目录-->
+    <!--<mvc:resources location="/static/" mapping="/static/**"/>-->
+    <mvc:resources mapping="/statics/css/**" location="/statics/css/"/>
+    <mvc:resources mapping="/js/**" location="/statics/js/"/>
+    <mvc:resources mapping="/image/**" location="/statics/images/"/>
+    <mvc:default-servlet-handler />  <!--这句要加上，要不然可能会访问不到静态资源，具体作用自行百度-->
+
+    <!--
+        说明：
+        location元素表示webapp目录下的static包下的所有文件；
+        mapping元素表示以/static开头的所有请求路径，如/static/a 或者/static/a/b；
+        该配置的作用是：DispatcherServlet不会拦截以/static开头的所有请求路径，并当作静态资源
+        交由Servlet处理。
+    -->
+
+    <!-- 对模型视图名称的解析，即在模型视图名称添加前后缀(如果最后一个还是表示文件夹,则最后的斜杠不要漏了) 使用JSP-->
+    <!-- 默认的视图解析器 在上边的解析错误时使用 (默认使用html)- -->
+    <bean id="defaultViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/><!--表示解析成哪种视图 -->
+        <property name="prefix" value="/views/"/><!--设置JSP文件的目录位置-->
+        <property name="suffix" value=".jsp"/>
+        <property name="exposeContextBeansAsAttributes" value="true"/>
+    </bean>
+
+    <!-- 自动扫描装配 -->
+    <!--spring可以自动扫描base-package下面或者子包下面的java文件，如果扫描有@Component @Service @Controller等这些注解的类，则把这些类注册为bean。-->
+    <!-- 设置自动注入bean的扫描范围，use-default-filters默认为true，会扫描所有的java类进行注入 ，-->
+    <!-- Use-dafault-filters=”false”的情况下：<context:exclude-filter>指定的不扫描，<context:include-filter>指定的扫描 -->
+    <!-- springmvc和application文件都需要配置，但mvc文件只扫描controller类，application扫描不是controller类 -->
+    <context:component-scan base-package="example.controller"/>
+    <context:component-scan base-package="example.pojo"/>
+    <context:component-scan base-package="example.mapper"/>  <!--无效，未扫描到-->
+    <context:component-scan base-package="example.service"/>
+    <context:component-scan base-package="example.until"/>
+
+    <!--
+    <context:component-scan base-package="mytest.*" use-default-filters="false">
+         <context:include-filter expression="org.springframework.stereotype.Controller" type="annotation"/>
+    </context:component-scan>
+    -->
+</beans>
